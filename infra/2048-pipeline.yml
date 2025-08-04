@@ -12,7 +12,7 @@ Parameters:
     Type: String
     Default: main
     Description: Branch to track (usually main or master)
-  GitHubToken:
+  GH_PAT:
     Type: String
     NoEcho: true
     Description: GitHub Personal Access Token (with repo scope)
@@ -188,7 +188,7 @@ Resources:
                 Owner: !Ref GitHubOwner
                 Repo: !Ref GitHubRepo
                 Branch: !Ref GitHubBranch
-                OAuthToken: !Ref GitHubToken
+                OAuthToken: !Ref GH_PAT
                 PollForSourceChanges: false
               RunOrder: 1
 
