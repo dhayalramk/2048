@@ -194,7 +194,6 @@ Resources:
 
   ECSService:
     Type: AWS::ECS::Service
-    DependsOn: ECSCluster
     Properties:
       Cluster: !Ref ECSCluster
       LaunchType: FARGATE
@@ -202,10 +201,13 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
-          Subnets: !Ref PublicSubnets
+          Subnets:
+            - !Ref PublicSubnet1
+            - !Ref PublicSubnet2
           SecurityGroups:
             - !Ref ECSSecurityGroup
       TaskDefinition: !Ref ECSTaskDefinition
+
 
   CodeBuildRole:
     Type: AWS::IAM::Role
