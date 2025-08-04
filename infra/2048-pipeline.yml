@@ -12,26 +12,23 @@ Parameters:
     Type: String
     Default: main
     Description: Branch to track (usually main or master)
-  GH_PAT:
+  GitHubToken:
     Type: String
     NoEcho: true
     Description: GitHub Personal Access Token (with repo scope)
 
 Resources:
 
-  ### ECR Repository
   ECRRepository:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: 2048-game
 
-  ### ECS Cluster
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: 2048Cluster
 
-  ### Task Execution Role
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -46,7 +43,6 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
 
-  ### Task Definition
   ECSTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -62,7 +58,6 @@ Resources:
           PortMappings:
             - ContainerPort: 80
 
-  ### Security Group
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -74,7 +69,6 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-  ### Fargate Service
   ECSService:
     Type: AWS::ECS::Service
     DependsOn: ECSCluster
@@ -90,7 +84,6 @@ Resources:
             - !Ref ECSSecurityGroup
       TaskDefinition: !Ref ECSTaskDefinition
 
-  ### CodeBuild Role
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
@@ -115,7 +108,6 @@ Resources:
                   - s3:*
                 Resource: "*"
 
-  ### CodeBuild Project
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -132,7 +124,6 @@ Resources:
         Type: CODEPIPELINE
       TimeoutInMinutes: 15
 
-  ### CodePipeline Role
   CodePipelineRole:
     Type: AWS::IAM::Role
     Properties:
@@ -158,13 +149,11 @@ Resources:
                   - s3:*
                 Resource: "*"
 
-  ### Pipeline Artifact Bucket
   ArtifactBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "2048-pipeline-artifacts-${AWS::AccountId}"
 
-  ### CodePipeline
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -188,7 +177,7 @@ Resources:
                 Owner: !Ref GitHubOwner
                 Repo: !Ref GitHubRepo
                 Branch: !Ref GitHubBranch
-                OAuthToken: !Ref GH_PAT
+                OAuthToken: !Ref GitHubToken
                 PollForSourceChanges: false
               RunOrder: 1
 
