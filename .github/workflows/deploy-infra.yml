@@ -1,0 +1,32 @@
+name: Deploy Infra to AWS
+
+on:
+  workflow_dispatch:  # Manually trigger when needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ap-south-1
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy CloudFormation Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file infra/2048-pipeline.yml \
+            --stack-name 2048-game-stack \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              GitHubOwner=${{ github.repository_owner }} \
+              GitHubRepo=${{ github.event.repository.name }} \
+              GitHubBranch=main \
+              GitHubToken=${{ secrets.GITHUB_TOKEN }}
