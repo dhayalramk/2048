@@ -18,4 +18,4 @@ jobs:
 
       - name: Delete CloudFormation Stack
         run: |
-          aws cloudformation delete-stack --stack-name 2048-game-stack
+          aws cloudformation delete-stack --stack-name game2048-stack
