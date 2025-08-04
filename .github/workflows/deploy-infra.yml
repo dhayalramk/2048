@@ -23,7 +23,7 @@ jobs:
         run: |
           aws cloudformation deploy \
             --template-file infra/2048-pipeline.yml \
-            --stack-name 2048-game-stack \
+            --stack-name game2048-stack \
             --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides \
               GitHubOwner=${{ github.repository_owner }} \
